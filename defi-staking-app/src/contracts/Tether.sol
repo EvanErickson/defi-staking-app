@@ -1,32 +1,34 @@
 pragma solidity ^0.5.0;
 
 contract Tether {
-    string public name = 'Fake Tether';
-    string public symbol = 'mUSDT';
+    string public name = "Fake Tether";
+    string public symbol = "mUSDT";
     uint256 public totalSupply = 1000000000000000000000000; // 1 million tokens
     uint8 public decimals = 18;
-    
-    mapping (address => uint256) public balanceOf;
-    mapping(address => mapping (address => uint256)) public allowance;
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     event Transfer(
         address indexed _from,
         address indexed _to,
-        uint indexed _value
+        uint256 indexed _value
     );
 
     event Approval(
         address indexed _owner,
         address indexed _spender,
-        uint _value
+        uint256 _value
     );
-
 
     constructor() public {
         balanceOf[msg.sender] = totalSupply;
     }
 
-    function transfer(address _to, uint256 _value) public returns (bool success){
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
+    {
         require(balanceOf[msg.sender] >= _value);
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
@@ -34,14 +36,21 @@ contract Tether {
         return true;
     }
 
-    function approve(address _spender, uint _value) public returns (bool success){
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
         allowance[msg.sender][_spender] = _value;
         //Shouldn't it be <= value because you are authenticating it?
         // allowance[msg.sender][_spender] <= _value;
         emit Approval(msg.sender, _spender, _value);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success){
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
         require(_value <= balanceOf[_from]);
         require(_value <= allowance[_from][msg.sender]);
         balanceOf[_to] += _value;
